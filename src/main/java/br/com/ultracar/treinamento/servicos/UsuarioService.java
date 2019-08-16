@@ -1,6 +1,5 @@
 package br.com.ultracar.treinamento.servicos;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,13 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository repositorio;
 	
+	@Autowired
+	private UsuarioNewService newService;
+	
+	public Usuario findOne(Long id) {
+		return this.repositorio.getOne(id);
+	}
+	
 	public void salvarUsuario(Usuario usuario) {
 		this.repositorio.save(usuario);
 	}
@@ -28,8 +34,9 @@ public class UsuarioService {
 	
 	public void deletarMuitosUsuario(List<Long> ids) {
 		ids.parallelStream().forEach(id -> {
+			this.repositorio.save(this.repositorio.getOne(id));
 			if(this.repositorio.existsById(id)) {
-				this.repositorio.deleteById(id);
+				this.newService.deletarUmUsuario(id);
 			}
 		});
 	}
